@@ -213,11 +213,11 @@ table_maker <- function(data, questionnaire_object, questionnaire, choices, weig
   if(sum(unlist(purrr::map(var.names, questionnaire_object$question_is_select_multiple)))>0){
     
     sel_mul_rgx <- paste0(sel_mul, "(\\/|\\.)")
-    sel_mul_extract_rgx <- paste0("(", str_c(sel_mul, collapse = "|"), ")")
+    sel_mul_extract_rgx <- paste0("(", str_c(sel_mul, collapse = "\\.|"), ")")
     sel_mul_remove_rgx <- paste0("(", str_c(sel_mul_rgx, collapse = "|"), ")")
     
     table_output <- table_output %>%
-      mutate(sel_mul = str_extract(data, sel_mul_extract_rgx))
+      mutate(sel_mul = gsub("\\.$","",str_extract(data, sel_mul_extract_rgx)))
     num_var_indices <- which(unlist(purrr::map(table_output %>% pull(data), questionnaire_object$question_is_numeric))) +1
     avg_indices <- which(table_output[, 1] == "Average")
     avg_indices <- avg_indices[! avg_indices %in% num_var_indices]
